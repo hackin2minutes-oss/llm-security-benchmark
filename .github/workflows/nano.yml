@@ -1,0 +1,30 @@
+name: Security Scan
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  ai-security:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Run SawOne-Agentic
+        continue-on-error: true
+        uses: hackin2minutes-oss/sawone-agentic-action@v1
+        with:
+          severity: 'HIGH,CRITICAL'
+          enforce: false
+          languages: 'en,ar'
+
+      - name: Upload Security Reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sawone-agentic-reports
+          path: sawone-agentic-reports/
